@@ -7,6 +7,8 @@ En este repositorio se guardan los archivos mediante los cuales se hicieron el d
   2)	Despliegue, a través del uso del componente integrado de kubernetes dentro de Docker desktop. El número de réplicas para los componentes del backend y el frontend es igual a uno.
   3)	Despliegue, a través del uso del componente integrado de kubernetes que posee Docker desktop. El número de réplicas para los componentes del backend y el frontend es igual a dos.
   4)	Despliegue, a través del uso de los componentes integrados en Docker desktop que permiten el uso de Kubernetes, para gestionar y orquestar despliegues. El número de réplicas para los componentes del backend y el frontend es igual a uno.
+
+
 Se analizará el performance de la aplicación, tras realizar pruebas de carga y rendimiento con dos GUI para testing de microservicios: Postman y Jmeter
 
 ## Referencias
