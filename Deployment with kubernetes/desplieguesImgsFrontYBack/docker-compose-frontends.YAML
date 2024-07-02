@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-catalog-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-catalog
+  template:
+    metadata:
+      labels:
+        app: frontend-catalog
+    spec:
+      containers:
+      - name: frontend-catalog
+        image: chaphe/frontend-catalog-image:1.0
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-reviews-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-reviews
+  template:
+    metadata:
+      labels:
+        app: frontend-reviews
+    spec:
+      containers:
+      - name: frontend-reviews
+        image: chaphe/frontend-reviews-image:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: REVIEWS_URL
+          value: "http://localhost:30001"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-store-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-store
+  template:
+    metadata:
+      labels:
+        app: frontend-store
+    spec:
+      containers:
+      - name: frontend-store
+        image: chaphe/frontend-store-image:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: STORE_URL
+          value: "http://localhost:30002"
+        - name: REVIEWS_URL
+          value: "http://localhost:30001"
+        - name: CATALOG_URL
+          value: "http://localhost:30000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-catalog-service
+spec:
+  selector:
+    app: frontend-catalog
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30100
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-reviews-service
+spec:
+  selector:
+    app: frontend-reviews
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30101
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-store-service
+spec:
+  selector:
+    app: frontend-store
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30102
+  type: NodePort
+

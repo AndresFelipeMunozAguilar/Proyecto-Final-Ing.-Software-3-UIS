@@ -1,0 +1,285 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:5.0.5
+        ports:
+        - containerPort: 27017
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-reviews-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-reviews
+  template:
+    metadata:
+      labels:
+        app: backend-reviews
+    spec:
+      containers:
+      - name: backend-reviews
+        image: chaphe/backend-reviews-image:1.0
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: mongodb-reviews-vol
+          mountPath: /data/configdb
+        env:
+        - name: MONGODB_HOST
+          value: mongo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-reviews-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-reviews
+  template:
+    metadata:
+      labels:
+        app: frontend-reviews
+    spec:
+      containers:
+      - name: frontend-reviews
+        image: chaphe/frontend-reviews-image:1.0
+        ports:
+        - containerPort: 80
+        dependsOn:
+        - name: backend-reviews
+          condition: Ready
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0.27
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-library-vol
+          mountPath: /var/lib/mysql
+        - name: mysql-catalog-store-sql
+          mountPath: /docker-entrypoint-initdb.d
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-catalog-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-catalog-library
+  template:
+    metadata:
+      labels:
+        app: backend-catalog-library
+    spec:
+      containers:
+      - name: backend-catalog-library
+        image: chaphe/backend-catalog-library-image:1.0
+        ports:
+        - containerPort: 8081
+        dependsOn:
+        - name: mysql
+          condition: Ready
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-catalog-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-catalog-library
+  template:
+    metadata:
+      labels:
+        app: frontend-catalog-library
+    spec:
+      containers:
+      - name: frontend-catalog-library
+        image: chaphe/frontend-catalog-library-image:1.0
+        ports:
+        - containerPort: 80
+        dependsOn:
+        - name: backend-catalog-library
+          condition: Ready
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-store-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-store-library
+  template:
+    metadata:
+      labels:
+        app: backend-store-library
+    spec:
+      containers:
+      - name: backend-store-library
+        image: chaphe/backend-store-library-image:1.0
+        ports:
+        - containerPort: 8082
+        dependsOn:
+        - name: mysql
+          condition: Ready
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-store-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-store
+  template:
+    metadata:
+      labels:
+        app: frontend-store
+    spec:
+      containers:
+      - name: frontend-store
+        image: chaphe/frontend-store-image:1.0
+        ports:
+        - containerPort: 80
+        dependsOn:
+        - name: backend-store-library
+          condition: Ready
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-reviews-service
+spec:
+  selector:
+    app: backend-reviews
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-reviews-service
+spec:
+  selector:
+    app: frontend-reviews
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-catalog-service
+spec:
+  selector:
+    app: backend-catalog-library
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-catalog-service
+spec:
+  selector:
+    app: frontend-catalog-library
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-store-service
+spec:
+  selector:
+    app: backend-store-library
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-store-service
+spec:
+  selector:
+    app: frontend-store
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+

@@ -1,0 +1,163 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-reviews-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-reviews
+  template:
+    metadata:
+      labels:
+        app: backend-reviews
+    spec:
+      containers:
+      - name: backend-reviews
+        image: chaphe/backend-reviews-image:1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGODB_HOST
+          value: mongodb-reviews-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-catalog-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-catalog
+  template:
+    metadata:
+      labels:
+        app: backend-catalog
+    spec:
+      containers:
+      - name: backend-catalog
+        image: chaphe/backend-catalog-image:1.0
+        ports:
+        - containerPort: 8081
+        env:
+        - name: MYSQL_DB_HOST
+          value: mysql-catalog-store-service 
+        - name: MYSQL_DB_PORT
+          value: "3306"
+        - name: MYSQL_DB_USERNAME
+          value: root
+        - name: MYSQL_DB_PASSWORD
+          value: password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-store-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-store
+  template:
+    metadata:
+      labels:
+        app: backend-store
+    spec:
+      containers:
+      - name: backend-store
+        image: chaphe/backend-store-image:1.0
+        ports:
+        - containerPort: 8082
+        env:
+        - name: MYSQL_DB_HOST
+          value: mysql-catalog-store-service
+        - name: MYSQL_DB_PORT
+          value: "3306"
+        - name: MYSQL_DB_USERNAME
+          value: root
+        - name: MYSQL_DB_PASSWORD
+          value: password
+        - name: RABBITMQ_HOST
+          value: rabbitmq-service
+        - name: RABBITMQ_PORT
+          value: "5672"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-shipping-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-shipping
+  template:
+    metadata:
+      labels:
+        app: backend-shipping
+    spec:
+      containers:
+      - name: backend-shipping
+        image: chaphe/backend-shipping-image:1.0
+        ports:
+        - containerPort: 3000
+        env:
+        - name: RABBITMQ_HOST
+          value: rabbitmq-service 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-reviews-service
+spec:
+  selector:
+    app: backend-reviews
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30001
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-catalog-service
+spec:
+  selector:
+    app: backend-catalog
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+      nodePort: 30000
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-store-service
+spec:
+  selector:
+    app: backend-store
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+      nodePort: 30002
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-shipping-service
+spec:
+  selector:
+    app: backend-shipping
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: NodePort
+
