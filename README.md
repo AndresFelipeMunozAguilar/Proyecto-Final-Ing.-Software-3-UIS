@@ -14,7 +14,7 @@ Se analizará el performance de la aplicación, tras realizar pruebas de carga y
 ## Estructura
 En esta sección se enumeran algunos archivos importantes, debido a los cuales se puede realizar el despliegue de la aplicación
 
-1) Source\bookstore-app-main\backends\persistent\backend-reviews\Initialmongodb_for_docker.js. Este archivo permite la inserción de datos, con docker desktop y contenedores, de los datos de review de la base de datos no relacional, basada en mongo. El cambio más siginificativo es el puerto mediante el cual se conecta a la base de datos: El puerto 27017.
+1) *"Source\bookstore-app-main\backends\persistent\backend-reviews\Initialmongodb_for_docker.js."* Este archivo permite la inserción de datos, con docker desktop y contenedores, de los datos de review de la base de datos no relacional, basada en mongo. El cambio más siginificativo es el puerto mediante el cual se conecta a la base de datos: El puerto 27017.
 
 ## Referencias
 - Pedraza, G. (s/f). bookstore-app: Esta aplicación de “Libreria Virtual” pretende servir como herramienta de aprendizaje de temas como microservicios, despliegue basado en contenedores (Docker) y orquestación de contenedores (Kubernetes).
