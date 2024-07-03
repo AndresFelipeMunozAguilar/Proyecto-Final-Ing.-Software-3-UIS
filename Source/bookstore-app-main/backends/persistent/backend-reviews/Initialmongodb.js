@@ -4,10 +4,11 @@ const reseñasModel = require("./models/ModelReviews");
 
 //configuracion conexion con mongodb
 
-var uri_mongodb = 'mongodb://' +  process.env.MONGODB_HOST + ':32460/test';
+var uri_mongodb = 'mongodb://127.0.0.1:32460/test';
 console.log(uri_mongodb);
+moongose.set('strictQuery', true)
 moongose.connect(uri_mongodb, null, () => { console.log("=> Connect with mongondb") });
-//moongose.connect('mongodb://137.184.238.11:27017/test', null, () => { console.log("=> Connect with mongondb") });
+//moongose.connect('mongodb://137.184.238.11:32460/test', null, () => { console.log("=> Connect with mongondb") });
 
 var InitialReviews = [
     {
