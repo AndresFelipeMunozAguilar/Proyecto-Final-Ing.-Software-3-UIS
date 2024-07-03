@@ -46,7 +46,7 @@ kind: Deployment
 metadata:
   name: frontend-store-deployment
 spec:
-  replicas: 3
+  replicas: 9
   selector:
     matchLabels:
       app: frontend-store
