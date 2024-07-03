@@ -39,7 +39,7 @@ spec:
         - containerPort: 80
         env:
         - name: REVIEWS_URL
-          value: "http://localhost:30001"
+          value: "http://127.0.0.1:30001"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -62,11 +62,11 @@ spec:
         - containerPort: 80
         env:
         - name: STORE_URL
-          value: "http://localhost:30002"
+          value: "http://127.0.0.1:30002"
         - name: REVIEWS_URL
-          value: "http://localhost:30001"
+          value: "http://127.0.0.1:30001"
         - name: CATALOG_URL
-          value: "http://localhost:30000"
+          value: "http://127.0.0.1:30000"
 ---
 apiVersion: v1
 kind: Service
