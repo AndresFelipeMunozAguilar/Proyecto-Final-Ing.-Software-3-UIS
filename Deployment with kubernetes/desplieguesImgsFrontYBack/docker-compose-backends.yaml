@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend-reviews-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: backend-reviews
@@ -26,7 +26,7 @@ kind: Deployment
 metadata:
   name: backend-catalog-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: backend-catalog
@@ -55,7 +55,7 @@ kind: Deployment
 metadata:
   name: backend-store-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: backend-store
